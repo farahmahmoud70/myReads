@@ -1,0 +1,6 @@
+export const GET_BOOK = 'GET_BOOK';
+export const GET_ALL_BOOKS = 'GET_ALL_BOOKS';
+export const GET_ALL_BOOKS_SUCCESS = 'GET_ALL_BOOKS_SUCCESS';
+export const GET_ALL_BOOKS_FAILURE = 'GET_ALL_BOOKS_FAILURE';
+export const UPDATE_BOOK = 'UPDATE_BOOK';
+export const SEARCH_FOR_BOOKS = 'SEARCH_FOR_BOOKS';
