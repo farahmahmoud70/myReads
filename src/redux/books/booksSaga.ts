@@ -3,11 +3,17 @@ import { all, call, put, takeLatest } from 'redux-saga/effects';
 import axios, { AxiosResponse } from 'axios';
 
 // Types & Interfaces
-import { GET_ALL_BOOKS } from '../actionTypes';
+import { GET_ALL_BOOKS, UPDATE_BOOK } from '../actionTypes';
 import { IBook } from '../../types/commonTypes';
 
 // Actions
-import { getAllBooksFailure, getAllBooksSuccess } from './booksActions';
+import {
+  getAllBooksFailure,
+  getAllBooksSuccess,
+  updateBookFailure,
+  updateBookSuccess,
+} from './booksActions';
+import { BookShelf, UpdateBook, UpdateBookPayload } from './booksTypes';
 
 const booksApi = 'https://reactnd-books-api.udacity.com';
 let token = localStorage.token;
@@ -41,12 +47,44 @@ function* getAllBooksSaga() {
   }
 }
 
+const updateBook = (payload: UpdateBookPayload) =>
+  axios.put<IBook>(
+    `${booksApi}/books/${payload.id}`,
+    { shelf: payload.shelf },
+    { headers }
+  );
+
 /*
-  Starts worker saga on latest dispatched `GET_ALL_BOOKS` action.
-  Allows concurrent increments.
+  Worker Saga: Fired on UPDATE_BOOK action
 */
-function* todoSaga() {
-  yield all([takeLatest(GET_ALL_BOOKS, getAllBooksSaga)]);
+function* updateBookSaga({ payload }: UpdateBook) {
+  try {
+    const response: AxiosResponse<{ shelf: BookShelf }> = yield call(() =>
+      updateBook(payload)
+    );
+    console.log(response);
+    yield put(
+      updateBookSuccess({
+        data: response.data,
+      })
+    );
+  } catch (e: any) {
+    yield put(
+      updateBookFailure({
+        error: e.message,
+      })
+    );
+  }
 }
 
-export default todoSaga;
+/*
+  Starts worker saga on latest dispatched `GET_ALL_BOOKS, UPDATE_BOOK` action.
+*/
+function* booksSaga() {
+  yield all([
+    takeLatest(GET_ALL_BOOKS, getAllBooksSaga),
+    takeLatest(UPDATE_BOOK, updateBookSaga),
+  ]);
+}
+
+export default booksSaga;

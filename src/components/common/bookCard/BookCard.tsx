@@ -1,3 +1,6 @@
+// Libs
+import { useDispatch } from 'react-redux';
+
 // Constants
 import {
   CURRENTLY_READING,
@@ -18,8 +21,11 @@ import {
   BookDetailsCtr,
   BookImg,
 } from './BookCardStyles';
+import { updateBook } from '../../../redux/books/booksActions';
 
 const BookCard = ({ book }: Props) => {
+  const dispatch = useDispatch();
+
   const bookOptions = (): IOption[] => {
     return [
       { value: 'none', title: 'Move to...', disabled: true },
@@ -30,7 +36,7 @@ const BookCard = ({ book }: Props) => {
   };
 
   const onOptionChange = (value: string): void => {
-    console.log(value);
+    dispatch(updateBook({ id: book.id, shelf: value }));
   };
 
   return (
